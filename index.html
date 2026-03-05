@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Vedant! 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --navy: #080e1c;
+      --navy2: #0d1a33;
+      --navy3: #112244;
+      --gold: #FFD700;
+      --gold2: #FFA500;
+      --white: #ffffff;
+      --soft: #c8d8f0;
+      --accent: #4fc3f7;
+      --pink: #ff6eb4;
+      --green: #6BCB77;
+      --card: rgba(255,255,255,0.04);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--navy); font-family:'Nunito',sans-serif; color:var(--white); min-height:100vh; overflow-x:hidden; cursor:none; }
+
+    /* CURSOR */
+    .cursor { width:18px;height:18px;background:var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:transform 0.08s; }
+
+    /* FIREWORKS CANVAS */
+    #fwCanvas { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0; }
+
+    /* STARS */
+    .stars { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1; }
+    .star { position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) ease-in-out infinite; }
+    @keyframes twinkle { 0%,100%{opacity:.15;transform:scale(1)} 50%{opacity:.9;transform:scale(1.5)} }
+
+    /* HERO */
+    .hero { position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:60px 20px 40px; }
+    .from-badge { background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);color:var(--gold);font-size:0.8rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:7px 22px;border-radius:50px;margin-bottom:28px;animation:fadeUp 0.6s 0.1s both; }
+    .hb-text { font-family:'Fredoka One',cursive;font-size:clamp(1.4rem,5vw,2.8rem);color:var(--soft);margin-bottom:8px;animation:fadeUp 0.7s 0.2s both; }
+    .big-name { font-family:'Fredoka One',cursive;font-size:clamp(4rem,14vw,9rem);line-height:1;background:linear-gradient(135deg,var(--gold) 0%,#fff 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp 0.7s 0.25s both;filter:drop-shadow(0 0 40px rgba(255,215,0,0.3)); }
+    .tagline { color:rgba(255,255,255,0.5);font-size:clamp(0.85rem,2.2vw,1.1rem);margin-bottom:40px;animation:fadeUp 0.7s 0.35s both; }
+    .fw-btn { background:linear-gradient(135deg,#1a3a6e,#0d2040);border:1px solid rgba(255,215,0,0.5);color:var(--gold);padding:16px 44px;font-family:'Fredoka One',cursive;font-size:1.15rem;border-radius:50px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 28px rgba(0,0,0,0.5);animation:fadeUp 0.7s 0.45s both; }
+    .fw-btn:hover { transform:translateY(-4px) scale(1.04);box-shadow:0 16px 48px rgba(255,215,0,0.25); }
+
+    /* SPOTLIGHT: PHOTO + MESSAGE */
+    .spotlight { position:relative;z-index:2;max-width:900px;margin:0 auto 60px;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:28px; }
+    @media(max-width:640px){.spotlight{grid-template-columns:1fr;}}
+
+    .photo-card { background:var(--card);border:2px dashed rgba(255,215,0,0.3);border-radius:28px;padding:36px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;transition:border-color 0.3s; }
+    .photo-card:hover { border-color:rgba(255,215,0,0.6); }
+    .photo-circle { width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,var(--navy3),#1a3060);border:3px solid rgba(255,215,0,0.35);display:flex;align-items:center;justify-content:center;font-size:3.5rem;margin-bottom:18px;overflow:hidden; }
+    .photo-circle img { width:100%;height:100%;object-fit:cover;display:none; }
+    .photo-label { color:rgba(255,255,255,0.4);font-size:0.82rem;font-weight:700;letter-spacing:1px;text-align:center;margin-bottom:12px; }
+    .upload-btn { background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);color:var(--gold);padding:9px 24px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer;transition:background 0.2s; }
+    .upload-btn:hover { background:rgba(255,215,0,0.2); }
+    #photoInput { display:none; }
+
+    .message-card { background:linear-gradient(135deg,rgba(255,215,0,0.06),rgba(79,195,247,0.06));border:1px solid rgba(255,215,0,0.18);border-radius:28px;padding:32px 28px;display:flex;flex-direction:column;gap:14px; }
+    .msg-label { font-size:0.75rem;font-weight:800;letter-spacing:3px;color:var(--gold);text-transform:uppercase; }
+    .personal-message { flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:16px;color:white;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;line-height:1.7;resize:none;min-height:148px;outline:none;transition:border-color 0.3s; }
+    .personal-message:focus { border-color:rgba(255,215,0,0.45); }
+    .personal-message::placeholder { color:rgba(255,255,255,0.22); }
+    .save-btn { background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;padding:12px 28px;border-radius:50px;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer;align-self:flex-start;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 6px 24px rgba(255,215,0,0.3); }
+    .save-btn:hover { transform:translateY(-3px);box-shadow:0 12px 32px rgba(255,215,0,0.5); }
+
+    /* CODE BLOCK */
+    .code-section { position:relative;z-index:2;max-width:700px;margin:0 auto 60px;padding:0 24px; }
+    .code-block { background:#07111f;border-radius:20px;border:1px solid rgba(255,255,255,0.07);overflow:hidden; }
+    .code-header { background:rgba(255,255,255,0.04);padding:12px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,0.06); }
+    .dot { width:12px;height:12px;border-radius:50%; } .dot.r{background:#ff5f57;} .dot.y{background:#ffbd2e;} .dot.g{background:#28ca41;}
+    .code-filename { color:rgba(255,255,255,0.35);font-size:0.8rem;margin-left:8px; }
+    .code-body { padding:24px 28px;font-family:'Courier New',monospace;font-size:clamp(0.78rem,1.8vw,0.95rem);line-height:2; }
+    .ck{color:#c792ea;} .cs{color:#c3e88d;} .cn{color:#f78c6c;} .cb{color:#89ddff;} .cc{color:rgba(255,255,255,0.28);}
+
+    /* TRAITS */
+    .traits-section { position:relative;z-index:2;max-width:900px;margin:0 auto 60px;padding:0 24px; }
+    .section-title { font-family:'Fredoka One',cursive;font-size:clamp(1.4rem,4vw,2rem);text-align:center;margin-bottom:28px;color:var(--gold); }
+    .traits-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px; }
+    .trait-card { background:var(--card);border:1px solid rgba(255,215,0,0.1);border-radius:20px;padding:28px 20px;text-align:center;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;position:relative;overflow:hidden; }
+    .trait-card::before { content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--gold),var(--accent));transform:scaleX(0);transition:transform 0.3s; }
+    .trait-card:hover { transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.5);border-color:rgba(255,215,0,0.3); }
+    .trait-card:hover::before { transform:scaleX(1); }
+    .trait-emoji { font-size:2.4rem;display:block;margin-bottom:12px; }
+    .trait-title { font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--gold);margin-bottom:8px; }
+    .trait-card p { color:rgba(255,255,255,0.55);font-size:0.88rem;line-height:1.5; }
+
+    /* BALLOON GAME */
+    .game-section { position:relative;z-index:2;max-width:800px;margin:0 auto 60px;padding:0 24px; }
+    .game-arena { background:var(--navy2);border:1px solid rgba(255,215,0,0.12);border-radius:28px;padding:28px;min-height:340px;display:flex;flex-direction:column;align-items:center; }
+    .score-row { display:flex;gap:32px;margin-bottom:20px; }
+    .s-item { text-align:center; }
+    .s-val { font-family:'Fredoka One',cursive;font-size:2rem;color:var(--gold);display:block; }
+    .s-lbl { font-size:0.78rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px; }
+    .balloon-field { width:100%;flex:1;position:relative;min-height:220px; }
+    .balloon { position:absolute;font-size:2.8rem;cursor:pointer;user-select:none;animation:floatUp var(--spd,4s) linear forwards; }
+    @keyframes floatUp { 0%{transform:translateY(0) rotate(-4deg);opacity:1;} 100%{transform:translateY(-360px) rotate(4deg);opacity:0;} }
+    .pop-txt { position:absolute;font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--gold);pointer-events:none;animation:popFly 0.7s ease-out forwards;z-index:10; }
+    @keyframes popFly { 0%{transform:scale(0.5)translateY(0);opacity:1;} 100%{transform:scale(1.5)translateY(-40px);opacity:0;} }
+    .game-btn { margin-top:20px;background:linear-gradient(135deg,#1a3a6e,#0a1e42);border:1px solid rgba(255,215,0,0.4);color:var(--gold);padding:13px 36px;font-family:'Fredoka One',cursive;font-size:1rem;border-radius:50px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 6px 24px rgba(0,0,0,0.4); }
+    .game-btn:hover { transform:translateY(-3px);box-shadow:0 12px 32px rgba(255,215,0,0.2); }
+
+    /* WISH */
+    .wish-section { position:relative;z-index:2;max-width:600px;margin:0 auto 80px;padding:0 24px;text-align:center; }
+    .wish-box { background:linear-gradient(135deg,rgba(255,215,0,0.07),rgba(79,195,247,0.07));border:1px solid rgba(255,215,0,0.22);border-radius:28px;padding:48px 36px; }
+    .wish-emoji { font-size:3.5rem;display:block;margin-bottom:18px;animation:bounce 1.2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);} }
+    .wish-text { font-family:'Fredoka One',cursive;font-size:clamp(1.1rem,3vw,1.6rem);line-height:1.5;color:white;margin-bottom:14px; }
+    .wish-from { color:var(--gold);font-weight:800;font-size:0.95rem; }
+
+    /* MUSIC FAB */
+    .music-fab { position:fixed;bottom:30px;right:30px;z-index:100;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;width:58px;height:58px;border-radius:50%;font-size:1.5rem;cursor:pointer;box-shadow:0 8px 24px rgba(255,215,0,0.5);transition:transform 0.2s;display:flex;align-items:center;justify-content:center; }
+    .music-fab:hover { transform:scale(1.12); }
+    .music-fab.playing { animation:pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 8px 24px rgba(255,215,0,0.5);} 50%{box-shadow:0 8px 48px rgba(255,215,0,1);} }
+
+    /* TOAST */
+    .toast { position:fixed;bottom:105px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(10,22,40,0.95);border:1px solid rgba(255,215,0,0.45);color:var(--gold);padding:12px 28px;border-radius:50px;font-weight:800;font-size:0.9rem;opacity:0;transition:all 0.4s;z-index:200;pointer-events:none;white-space:nowrap; }
+    .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
+
+    footer { position:relative;z-index:2;text-align:center;padding-bottom:40px;color:rgba(255,255,255,0.22);font-size:0.82rem; }
+    footer span { color:var(--pink); }
+
+    @keyframes fadeUp { 0%{opacity:0;transform:translateY(24px);} 100%{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+<canvas id="fwCanvas"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="stars" id="stars"></div>
+<div class="toast" id="toast"></div>
+<button class="music-fab" id="musicBtn" onclick="toggleMusic()" title="Toggle Birthday Song">🎵</button>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="from-badge">🎂 From Vaishnavi, with love</div>
+  <div class="hb-text">Happy Birthday</div>
+  <div class="big-name">Vedant</div>
+  <p class="tagline">Today the universe successfully deployed its greatest release 🚀</p>
+  <button class="fw-btn" onclick="burstFireworks()">🎆 Launch Fireworks!</button>
+</section>
+
+<!-- PHOTO + MESSAGE -->
+<div class="spotlight">
+  <div class="photo-card">
+    <div class="photo-circle" id="photoCircle">
+      <span id="photoEmoji">👑</span>
+      <img id="photoImg" src="" alt="Vedant"/>
+    </div>
+    <div class="photo-label">📸 Vedant's Photo · Upload below</div>
+    <button class="upload-btn" onclick="document.getElementById('photoInput').click()">📷 Upload Photo</button>
+    <input type="file" id="photoInput" accept="image/*" onchange="loadPhoto(event)"/>
+  </div>
+
+  <div class="message-card">
+    <div class="msg-label">💌 Personal Message</div>
+    <textarea class="personal-message" id="msgArea" placeholder="Write your heart out, Vaishnavi... 💛&#10;&#10;e.g. Bhai, you are the best brother in the entire world. Wishing you endless happiness today and always! ❤️"></textarea>
+    <button class="save-btn" onclick="saveMessage()">💾 Lock it in!</button>
+  </div>
+</div>
+
+<!-- CODE BLOCK -->
+<div class="code-section">
+  <div class="code-block">
+    <div class="code-header">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <span class="code-filename">vedant_birthday.js</span>
+    </div>
+    <div class="code-body">
+      <span class="cc">// 🎉 Special Release — Birthday Edition</span><br/>
+      <span class="ck">const</span> vedant = {<br/>
+      &nbsp;&nbsp;name: <span class="cs">"Vedant"</span>,<br/>
+      &nbsp;&nbsp;age: <span class="cn">++legendary</span>,<br/>
+      &nbsp;&nbsp;isAwesome: <span class="cb">true</span>,<br/>
+      &nbsp;&nbsp;bugs: <span class="cn">0</span>, <span class="cc">// obviously</span><br/>
+      &nbsp;&nbsp;lovedBy: <span class="cs">"Vaishnavi"</span>,<br/>
+      &nbsp;&nbsp;favoriteColor: <span class="cs">"Navy Blue &amp; Black 💙"</span>,<br/>
+      &nbsp;&nbsp;vibe: <span class="cs">"Calm, Cool &amp; Unstoppable"</span>,<br/>
+      };<br/><br/>
+      <span class="ck">function</span> <span class="cb">celebrate</span>() {<br/>
+      &nbsp;&nbsp;<span class="cb">launchFireworks</span>();<br/>
+      &nbsp;&nbsp;<span class="cb">playHappyBirthday</span>();<br/>
+      &nbsp;&nbsp;<span class="cb">console</span>.log(<span class="cs">"🎂 Happy Birthday, " + vedant.name + "!"</span>);<br/>
+      }<br/><br/>
+      <span class="cb">celebrate</span>(); <span class="cc">// 🚀 running now...</span>
+    </div>
+  </div>
+</div>
+
+<!-- TRAITS -->
+<div class="traits-section">
+  <div class="section-title">⭐ Vedant.exe — Official Spec Sheet</div>
+  <div class="traits-grid">
+    <div class="trait-card"><span class="trait-emoji">⚡</span><div class="trait-title">Runtime: Legendary</div><p>Zero crashes, max performance. Runs flawlessly every single day.</p></div>
+    <div class="trait-card"><span class="trait-emoji">🧠</span><div class="trait-title">IQ: Off the Charts</div><p>Time complexity O(genius). Solves problems before they even exist.</p></div>
+    <div class="trait-card"><span class="trait-emoji">💙</span><div class="trait-title">Heart: Navy Blue</div><p>Deep, calm, loyal — just like the ocean. The best kind of bhai.</p></div>
+    <div class="trait-card"><span class="trait-emoji">🌟</span><div class="trait-title">Vibe: Unmatchable</div><p>Wherever Vedant walks, the room instantly becomes 10x cooler.</p></div>
+  </div>
+</div>
+
+<!-- BALLOON GAME -->
+<div class="game-section">
+  <div class="section-title">🎈 Pop Vedant's Birthday Balloons!</div>
+  <div class="game-arena">
+    <div class="score-row">
+      <div class="s-item"><span class="s-val" id="score">0</span><span class="s-lbl">Score</span></div>
+      <div class="s-item"><span class="s-val" id="popped">0</span><span class="s-lbl">Popped</span></div>
+      <div class="s-item"><span class="s-val" id="combo">x1</span><span class="s-lbl">Combo</span></div>
+    </div>
+    <div class="balloon-field" id="balloonField"></div>
+    <button class="game-btn" onclick="spawnBalloons()">🎈 Release Balloons!</button>
+  </div>
+</div>
+
+<!-- WISH -->
+<div class="wish-section">
+  <div class="wish-box">
+    <span class="wish-emoji">🎂</span>
+    <div class="wish-text">"May your code always compile, your chai always be hot, and your birthday always feel this magical, Vedant!"</div>
+    <div class="wish-from">— With all the love, Vaishnavi 💛</div>
+  </div>
+</div>
+
+<footer>Made with <span>♥</span> by Vaishnavi · Happy Birthday Vedant! 🎉</footer>
+
+<script>
+// ── CURSOR ──────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+
+// ── STARS ───────────────────────────────────────────
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 150; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random()*3+1;
+  s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${Math.random()*3+2}s;animation-delay:${Math.random()*5}s;`;
+  starsEl.appendChild(s);
+}
+
+// ── FIREWORKS ───────────────────────────────────────
+const fwCanvas = document.getElementById('fwCanvas');
+const ctx = fwCanvas.getContext('2d');
+function resizeFW() { fwCanvas.width=window.innerWidth; fwCanvas.height=window.innerHeight; }
+resizeFW(); window.addEventListener('resize', resizeFW);
+
+let particles = [];
+const fwColors = ['#FFD700','#FFA500','#FF6EB4','#4FC3F7','#c792ea','#c3e88d','#ffffff','#f78c6c','#89ddff'];
+
+function createFirework(x, y) {
+  const n = 90 + Math.floor(Math.random()*50);
+  const color = fwColors[Math.floor(Math.random()*fwColors.length)];
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI*2/n)*i + Math.random()*0.3;
+    const spd = Math.random()*7+1.5;
+    particles.push({ x, y, vx:Math.cos(angle)*spd, vy:Math.sin(angle)*spd, alpha:1, color, size:Math.random()*3+1, trail:[] });
+  }
+}
+
+function animateFW() {
+  ctx.fillStyle='rgba(8,14,28,0.18)';
+  ctx.fillRect(0,0,fwCanvas.width,fwCanvas.height);
+  particles = particles.filter(p=>p.alpha>0.02);
+  particles.forEach(p => {
+    p.trail.push({x:p.x,y:p.y,a:p.alpha});
+    if(p.trail.length>7) p.trail.shift();
+    p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.vx*=0.99; p.alpha-=0.015;
+    p.trail.forEach((t,i)=>{
+      ctx.beginPath(); ctx.arc(t.x,t.y,p.size*(i/p.trail.length)*0.5,0,Math.PI*2);
+      ctx.fillStyle=p.color; ctx.globalAlpha=t.a*(i/p.trail.length)*0.35; ctx.fill();
+    });
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fillStyle=p.color; ctx.globalAlpha=p.alpha; ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  if(particles.length) requestAnimationFrame(animateFW);
+  else ctx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
+}
+
+let fwInterval=null;
+function burstFireworks(duration=5000) {
+  clearInterval(fwInterval);
+  const end=Date.now()+duration;
+  fwInterval=setInterval(()=>{
+    if(Date.now()>end){clearInterval(fwInterval);return;}
+    createFirework(Math.random()*fwCanvas.width*0.8+fwCanvas.width*0.1, Math.random()*fwCanvas.height*0.55+60);
+  },250);
+  animateFW();
+}
+
+// ── HAPPY BIRTHDAY TUNE ─────────────────────────────
+let audioCtx=null, musicPlaying=false, musicNodes=[];
+const HB=[
+  [261.6,200],[261.6,200],[293.7,400],[261.6,400],[349.2,400],[329.6,800],
+  [261.6,200],[261.6,200],[293.7,400],[261.6,400],[392.0,400],[349.2,800],
+  [261.6,200],[261.6,200],[523.3,400],[440.0,400],[349.2,400],[329.6,400],[293.7,800],
+  [466.2,200],[466.2,200],[440.0,400],[349.2,400],[392.0,400],[349.2,800]
+];
+
+function playBirthdayTune() {
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  let t=audioCtx.currentTime+0.05;
+  musicNodes=[];
+  HB.forEach(([freq,dur])=>{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.type='sine';
+    osc.frequency.setValueAtTime(freq,t);
+    gain.gain.setValueAtTime(0,t);
+    gain.gain.linearRampToValueAtTime(0.22,t+0.02);
+    gain.gain.linearRampToValueAtTime(0.18,t+dur/1000-0.04);
+    gain.gain.linearRampToValueAtTime(0,t+dur/1000);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t+dur/1000);
+    musicNodes.push(osc);
+    t+=dur/1000;
+  });
+  musicPlaying=true;
+  const btn=document.getElementById('musicBtn');
+  btn.classList.add('playing'); btn.textContent='🎶';
+  const totalDur=HB.reduce((a,[,d])=>a+d,0);
+  setTimeout(()=>{ musicPlaying=false; btn.classList.remove('playing'); btn.textContent='🎵'; }, totalDur+400);
+}
+
+function stopMusic() {
+  musicNodes.forEach(n=>{try{n.stop();}catch(e){}});
+  musicNodes=[]; musicPlaying=false;
+  const btn=document.getElementById('musicBtn');
+  btn.classList.remove('playing'); btn.textContent='🎵';
+}
+
+function toggleMusic() {
+  if(musicPlaying) stopMusic();
+  else playBirthdayTune();
+}
+
+// ── PHOTO UPLOAD ─────────────────────────────────────
+function loadPhoto(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=document.getElementById('photoImg');
+    img.src=ev.target.result; img.style.display='block';
+    document.getElementById('photoEmoji').style.display='none';
+    showToast('📸 Photo uploaded! Looking great, Vedant! 👑');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SAVE MESSAGE ─────────────────────────────────────
+function saveMessage() {
+  const msg=document.getElementById('msgArea').value.trim();
+  if(!msg){showToast('✏️ Write something first!');return;}
+  showToast('💛 Message saved! Vedant will love this!');
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── BALLOON GAME ──────────────────────────────────────
+const emojiList=['🎈','🎀','🎊','🎁','🌟','🦋','🎂','🚀','💙','⭐','🎆','🏆'];
+let score=0,popped=0,comboCount=0,comboTimer=null;
+
+function spawnBalloons(){
+  const field=document.getElementById('balloonField');
+  for(let i=0;i<12;i++){
+    setTimeout(()=>{
+      const b=document.createElement('div');
+      b.className='balloon';
+      b.textContent=emojiList[Math.floor(Math.random()*emojiList.length)];
+      const left=Math.random()*84, spd=Math.random()*2+2.5;
+      b.style.cssText=`left:${left}%;bottom:0;--spd:${spd}s;animation-delay:${Math.random()*0.4}s;`;
+      b.addEventListener('click',e=>{
+        comboCount++; clearTimeout(comboTimer);
+        comboTimer=setTimeout(()=>{ comboCount=0; document.getElementById('combo').textContent='x1'; },1200);
+        const pts=Math.floor((10+Math.random()*15)*Math.max(1,comboCount));
+        score+=pts; popped++;
+        document.getElementById('score').textContent=score;
+        document.getElementById('popped').textContent=popped;
+        document.getElementById('combo').textContent='x'+Math.max(1,comboCount);
+        const pop=document.createElement('div');
+        pop.className='pop-txt';
+        pop.textContent='+'+pts+(comboCount>1?' 🔥':'');
+        pop.style.cssText=`left:${e.offsetX}px;top:${e.offsetY}px;`;
+        b.appendChild(pop); setTimeout(()=>b.remove(),400);
+      });
+      setTimeout(()=>{if(b.parentNode)b.remove();},spd*1000+700);
+      field.appendChild(b);
+    },i*160);
+  }
+}
+
+// ── AUTO START ────────────────────────────────────────
+setTimeout(()=>burstFireworks(6000), 500);
+setTimeout(()=>spawnBalloons(), 1200);
+setTimeout(()=>playBirthdayTune(), 800);
+</script>
+</body>
+</html>
